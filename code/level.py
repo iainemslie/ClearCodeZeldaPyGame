@@ -57,7 +57,7 @@ class Level:
         #                 (x, y), [self.visible_sprites], self.obstacle_sprites)
 
         self.player = Player(
-            (2000, 1430), [self.visible_sprites], self.obstacle_sprites)
+            (2000, 1300), [self.visible_sprites], self.obstacle_sprites)
 
     def run(self):
         # update and draw the game
