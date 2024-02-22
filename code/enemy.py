@@ -33,6 +33,9 @@ class Enemy(Entity):
         self.notice_radius = monster_info['notice_radius']
         self.attack_type = monster_info['attack_type']
 
+        # player interaction
+        self.can_attack = True
+
     def import_graphics(self, name):
         self.animations = {'idle': [], 'move': [], 'attack': []}
         main_path = f'graphics/monsters/{name}/'
@@ -54,7 +57,7 @@ class Enemy(Entity):
     def get_status(self, player):
         distance = self.get_player_distance_direction(player)[0]
 
-        if distance <= self.attack_radius:
+        if distance <= self.attack_radius and self.can_attack:
             self.status = 'attack'
         elif distance <= self.notice_radius:
             self.status = 'move'
@@ -69,8 +72,21 @@ class Enemy(Entity):
         else:
             self.direction = pygame.math.Vector2()
 
+    def animate(self):
+        animation = self.animations[self.status]
+
+        self.frame_index += self.animation_speed
+        if self.frame_index >= len(self.animations[self.status]):
+            if self.status == 'attack':
+                self.can_attack = False
+            self.frame_index = 0
+
+        self.image = animation[int(self.frame_index)]
+        self.rect = self.image.get_rect(center=self.hitbox.center)
+
     def update(self):
         self.move(self.speed)
+        self.animate()
 
     def enemy_update(self, player):
         self.get_status(player)
