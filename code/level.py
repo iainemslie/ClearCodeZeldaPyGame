@@ -4,10 +4,11 @@ from tile import Tile
 from player import Player
 from debug import debug
 from support import import_csv_layout, import_folder
-from random import choice
+from random import choice, randint
 from weapon import Weapon
 from ui import UI
 from enemy import Enemy
+from particles import AnimationPlayer, ParticleEffect
 
 
 class Level:
@@ -30,6 +31,9 @@ class Level:
 
         # user interface
         self.ui = UI()
+
+        # particles
+        self.animation_player = AnimationPlayer()
 
     def create_map(self):
         layouts = {
@@ -112,7 +116,12 @@ class Level:
                 if collision_sprites:
                     for target_sprite in collision_sprites:
                         if target_sprite.sprite_type == 'grass':
-                            target_sprite.kill()
+                            pos = target_sprite.rect.center
+                            offset = pygame.math.Vector2(0, 75)
+                            for leaf in range(randint(3, 6)):
+                                self.animation_player.create_grass_particles(
+                                    pos - offset, (self.visible_sprites))
+                                target_sprite.kill()
                         else:
                             target_sprite.get_damage(
                                 self.player, attack_sprite.sprite_type)
